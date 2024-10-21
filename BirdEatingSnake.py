@@ -1,6 +1,7 @@
 import pygame
 pygame.init()
 import random
+import os
 """Plan: final game will have a snake crawling aroung screen hunting birds
  that fly across the screen. Every time snake eats a bird it grows in
  length.
@@ -10,6 +11,8 @@ import random
     4. snake eats bird.
     5. generate new bird when bird is eaten.
     6. snake grows with each bird eaten and score goes up by one.
+    7. if a bird gets all the way across screen score goes down by one.
+    9. record high_score and place at top of screen.
 plan: show running score at top of screen."""
 
 clock = pygame.time.Clock()
@@ -35,6 +38,13 @@ pygame.display.set_caption("Bird eating snake")
 #define fonts
 font_small = pygame.font.SysFont("Lucida Sans", 40)
 font_large = pygame.font.SysFont("lucida Sans",46)
+
+#load high score if it exists else create the file
+if os.path.exists("score.txt"):
+    with open('score.txt','r') as file:
+        high_score = int(file.read())
+else:
+    high_score = 0
 
 #function to draw text to screen
 def draw_text(text,font,text_col,x,y):
@@ -65,6 +75,7 @@ class Bird(pygame.sprite.Sprite):
         #Animate bird
         cooldown = 20
         global score
+        global high_score
         
         self.counter += 1
         if self.counter > cooldown:
@@ -102,6 +113,12 @@ class Bird(pygame.sprite.Sprite):
             score -= 1
             self.kill() 
 
+        #update high_score
+        if score > high_score:
+            high_score = score
+            with open("score.txt","w") as file:
+                file.write(str(high_score))
+
 bird_group = pygame.sprite.Group()
 bird = Bird(50,100)
 bird_group.add(bird)
@@ -115,6 +132,7 @@ while run:
     bird_group.draw(screen)
 
     draw_text("Score: " + str(score),font_small,black,30,30)
+    draw_text("High_score: " + str(high_score),font_large,black,30,50)
 
     if len(bird_group) <= 1:
         bird = Bird(0,random.randint(10,HEIGHT//2))
