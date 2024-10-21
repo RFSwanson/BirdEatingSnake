@@ -9,7 +9,8 @@ import random
     3. bird flies across screen.
     4. snake eats bird.
     5. generate new bird when bird is eaten.
-    6. snake grows with each bird eaten."""
+    6. snake grows with each bird eaten and score goes up by one.
+plan: show running score at top of screen."""
 
 clock = pygame.time.Clock()
 FPS = 60
@@ -26,9 +27,19 @@ score = 0
 color_inner = (50,125,75)
 color_outer = (0,0,0)
 red = (255,0,0)
+black = (0,0,0)
 
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Bird eating snake")
+
+#define fonts
+font_small = pygame.font.SysFont("Lucida Sans", 40)
+font_large = pygame.font.SysFont("lucida Sans",46)
+
+#function to draw text to screen
+def draw_text(text,font,text_col,x,y):
+    img = font.render(text,True,text_col)
+    screen.blit(img,(x,y))
 
 #create snake
 snake_pos = [[WIDTH//2,HEIGHT//2 ]]
@@ -88,6 +99,7 @@ class Bird(pygame.sprite.Sprite):
         #bird moves across screen
         self.rect.x += 1
         if self.rect.left > WIDTH:
+            score -= 1
             self.kill() 
 
 bird_group = pygame.sprite.Group()
@@ -100,8 +112,9 @@ while run:
     screen.fill((255,255,255))
 
     bird_group.update()
-    print(score)
     bird_group.draw(screen)
+
+    draw_text("Score: " + str(score),font_small,black,30,30)
 
     if len(bird_group) <= 1:
         bird = Bird(0,random.randint(10,HEIGHT//2))
