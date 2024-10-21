@@ -53,6 +53,7 @@ class Bird(pygame.sprite.Sprite):
     def update(self):
         #Animate bird
         cooldown = 20
+        global score
         
         self.counter += 1
         if self.counter > cooldown:
@@ -80,13 +81,14 @@ class Bird(pygame.sprite.Sprite):
             #attach new piece to the end of the snake
             snake_pos.append(new_piece)
             #kill the eaten bird
+            score += 1
             self.kill()
             self.new_food = False
         
         #bird moves across screen
         self.rect.x += 1
         if self.rect.left > WIDTH:
-            self.kill()  
+            self.kill() 
 
 bird_group = pygame.sprite.Group()
 bird = Bird(50,100)
@@ -98,12 +100,11 @@ while run:
     screen.fill((255,255,255))
 
     bird_group.update()
+    print(score)
     bird_group.draw(screen)
 
     if len(bird_group) <= 1:
         bird = Bird(0,random.randint(10,HEIGHT//2))
-        score += 1
-        print(score)
         bird_group.add(bird)
 
     #draw snake
